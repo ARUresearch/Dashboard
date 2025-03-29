@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARU RESEARCH</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #e0f7fa, #80deea);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #00796b;
+            margin-bottom: 20px;
+        }
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00796b;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        input, button, select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #004d40;
+        }
+        .portal {
+            display: none;
+        }
+        .portal.active {
+            display: block;
+        }
+        .disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .nav button {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .nav button:hover {
+            background-color: #004d40;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #00796b;
+            color: white;
+        }
+        .admin-controls {
+            margin-top: 20px;
+        }
+        .admin-controls input {
+            margin-right: 10px;
+        }
+        .project-list {
+            margin-top: 20px;
+        }
+        .project-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .project-list li {
+            background: #f1f1f1;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 6px;
+        }
+        .status-message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .error-message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 6px;
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .logout-btn {
+            background-color: #d32f2f;
+            margin-top: 20px;
+        }
+        .logout-btn:hover {
+            background-color: #b71c1c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Main Screen with Four Options -->
+        <div id="mainScreen">
+            <div class="company-name">ARU RESEARCH</div>
+            <h1>Employee Portal</h1>
+            <div class="nav">
+                <button onclick="showPortal('taskUpdate')">Task Update</button>
+                <button onclick="showPortal('salaryDashboard'); loadSalaryDashboard();">Salary Dashboard</button>
+                <button onclick="showPortal('projectList'); loadProjectList();">Project List</button>
+                <button onclick="showPortal('adminLoginSection')">Admin Control</button>
+            </div>
+        </div>
+
+        <!-- Task Update Section -->
+        <div id="taskUpdate" class="portal">
+            <h2>Task Update</h2>
+            <div id="taskStatusMessage" class="status-message" style="display: none;"></div>
+            <div id="taskErrorMessage" class="error-message" style="display: none;"></div>
+            
+            <form id="attendanceForm">
+                <label for="employeeName">Select Employee Name:</label>
+                <select id="employeeName" required>
+                    <option value="">Select Name</option>
+                    <option value="Ayyappan">Ayyappan</option>
+                    <option value="Aditya">Aditya</option>
+                    <option value="Purushoth">Purushoth</option>
+                    <option value="Karthik">Karthik</option>
+                    <option value="Sanjay">Sanjay</option>
+                    <option value="Haripriya">Haripriya</option>
+                    <option value="Mahalakshmi">Mahalakshmi</option>
+                </select>
+                <label for="confirmName">Confirm Employee Name:</label>
+                <input type="text" id="confirmName" required placeholder="Re-enter your name">
+                <button type="button" onclick="markWorkStart()">Work Started</button>
+                <button type="button" onclick="markWorkEnd()">Work Ended</button>
+            </form>
+
+            <form id="taskForm" class="disabled">
+                <label for="tasksCompleted">Tasks Completed Today:</label>
+                <input type="number" id="tasksCompleted" required min="1">
+                <button type="submit">Update Tasks</button>
+            </form>
+        </div>
+
+        <!-- Salary Dashboard Section -->
+        <div id="salaryDashboard" class="portal">
+            <h2>Salary Dashboard</h2>
+            <div class="nav">
+                <button onclick="loadSalaryDashboard('all')">All Records</button>
+                <button onclick="loadSalaryDashboard('today')">Today's Records</button>
+                <button onclick="loadSalaryDashboard('month')">This Month</button>
+            </div>
+            <table id="salaryTable">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Date</th>
+                        <th>Work Start</th>
+                        <th>Work End</th>
+                        <th>Tasks</th>
+                        <th>Earnings (₹)</th>
+                        <th>Incentives (₹)</th>
+                        <th>Advances (₹)</th>
+                        <th>Total (₹)</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- Project List Section -->
+        <div id="projectList" class="portal">
+            <h2>Project List</h2>
+            <table id="projectTable">
+                <thead>
+                    <tr>
+                        <th>Project Name</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Target</th>
+                        <th>Achieved</th>
+                        <th>Progress</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <!-- Admin Login Section -->
+        <div id="adminLoginSection" class="portal">
+            <h2>Admin Login</h2>
+            <div id="adminErrorMessage" class="error-message" style="display: none;"></div>
+            <form id="adminLoginForm">
+                <input type="password" id="adminPassword" placeholder="Enter Admin Password" required>
+                <button type="button" onclick="adminLogin()">Login</button>
+            </form>
+        </div>
+
+        <!-- Admin Controls (Visible After Login) -->
+        <div id="adminControls" class="portal">
+            <h3>Admin Controls</h3>
+            <div id="adminStatusMessage" class="status-message" style="display: none;"></div>
+            
+            <button class="logout-btn" onclick="adminLogout()">Logout</button>
+            
+            <div>
+                <h4>Modify Incentives and Advances</h4>
+                <label for="adminEmployeeName">Select Employee:</label>
+                <select id="adminEmployeeName" required>
+                    <option value="">Select Name</option>
+                    <option value="Ayyappan">Ayyappan</option>
+                    <option value="Aditya">Aditya</option>
+                    <option value="Purushoth">Purushoth</option>
+                    <option value="Karthik">Karthik</option>
+                    <option value="Sanjay">Sanjay</option>
+                    <option value="Haripriya">Haripriya</option>
+                    <option value="Mahalakshmi">Mahalakshmi</option>
+                </select>
+                <label for="incentiveAmount">Incentive Amount (₹):</label>
+                <input type="number" id="incentiveAmount" placeholder="Enter incentive amount" min="0">
+                <label for="advanceAmount">Advance Amount (₹):</label>
+                <input type="number" id="advanceAmount" placeholder="Enter advance amount" min="0">
+                <button type="button" onclick="addIncentiveAndAdvance()">Add Incentive & Advance</button>
+            </div>
+            
+            <div>
+                <h4>Add Project Details</h4>
+                <label for="projectName">Project Name:</label>
+                <input type="text" id="projectName" placeholder="Enter project name">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" required>
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" required>
+                <label for="sampleSize">Sample Size:</label>
+                <input type="number" id="sampleSize" placeholder="Enter sample size" min="1">
+                <label for="sampleAchieved">Sample Achieved:</label>
+                <input type="number" id="sampleAchieved" placeholder="Enter sample achieved" min="0">
+                <button type="button" onclick="addProject()">Add Project</button>
+            </div>
+            
+            <div>
+                <h4>Data Management</h4>
+                <button type="button" onclick="exportData()">Export All Data</button>
+                <button type="button" onclick="importData()">Import Data</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+                <button class="logout-btn" type="button" onclick="clearAllData()">Clear All Data</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Database Keys
+        const DB_KEYS = {
+            EMPLOYEES: "aru_employees_data",
+            PROJECTS: "aru_projects_data",
+            ADMIN_PASSWORD: "aru_admin_password"
+        };
+
+        // Initialize data from localStorage
+        function initializeData() {
+            return {
+                employees: JSON.parse(localStorage.getItem(DB_KEYS.EMPLOYEES)) || [],
+                projects: JSON.parse(localStorage.getItem(DB_KEYS.PROJECTS)) || [],
+                adminPassword: localStorage.getItem(DB_KEYS.ADMIN_PASSWORD) || "Admin1234"
+            };
+        }
+
+        // Save data to localStorage
+        function saveData(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        let { employees, projects, adminPassword } = initializeData();
+        let loggedInUser = null;
+
+        // Salary Slabs (example rates)
+        const slabRates = {
+            "A": 100,
+            "B": 80,
+            "C": 60
+        };
+
+        // Show Portal
+        function showPortal(portal) {
+            document.querySelectorAll(".portal").forEach(p => p.classList.remove("active"));
+            document.getElementById(portal).classList.add("active");
+            
+            // Hide all messages when switching portals
+            document.querySelectorAll(".status-message, .error-message").forEach(msg => {
+                msg.style.display = "none";
+            });
+        }
+
+        // Load Salary Dashboard with filters
+        function loadSalaryDashboard(filter = 'all') {
+            const salaryTableBody = document.querySelector("#salaryTable tbody");
+            salaryTableBody.innerHTML = "";
+
+            // Filter data based on selection
+            let filteredEmployees = [...employees];
+            const today = new Date().toISOString().split("T")[0];
+            const currentMonth = new Date().getMonth() + 1;
+            const currentYear = new Date().getFullYear();
+
+            if (filter === 'today') {
+                filteredEmployees = employees.filter(emp => emp.date === today);
+            } else if (filter === 'month') {
+                filteredEmployees = employees.filter(emp => {
+                    const empDate = new Date(emp.date);
+                    return empDate.getMonth() + 1 === currentMonth && empDate.getFullYear() === currentYear;
+                });
+            }
+
+            // Sort by date (newest first)
+            filteredEmployees.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            if (filteredEmployees.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td colspan="9" style="text-align: center;">No records found</td>`;
+                salaryTableBody.appendChild(row);
+                return;
+            }
+
+            filteredEmployees.forEach(employee => {
+                const totalSalary = (employee.dailyEarnings || 0) + (employee.incentives || 0) - (employee.advances || 0);
+                
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${employee.name}</td>
+                    <td>${employee.date}</td>
+                    <td>${employee.workStart || "-"}</td>
+                    <td>${employee.workEnd || "-"}</td>
+                    <td>${employee.tasksCompleted || "-"}</td>
+                    <td>${employee.dailyEarnings ? "₹" + employee.dailyEarnings : "-"}</td>
+                    <td>${employee.incentives ? "₹" + employee.incentives : "-"}</td>
+                    <td>${employee.advances ? "₹" + employee.advances : "-"}</td>
+                    <td>${totalSalary ? "₹" + totalSalary : "-"}</td>
+                `;
+                salaryTableBody.appendChild(row);
+            });
+        }
+
+        // Load Project List
+        function loadProjectList() {
+            const projectTableBody = document.querySelector("#projectTable tbody");
+            projectTableBody.innerHTML = "";
+
+            if (projects.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td colspan="6" style="text-align: center;">No projects found</td>`;
+                projectTableBody.appendChild(row);
+                return;
+            }
+
+            // Sort by end date (soonest first)
+            projects.sort((a, b) => new Date(a.endDate) - new Date(b.endDate));
+
+            projects.forEach(project => {
+                const progress = Math.round((project.sampleAchieved / project.sampleSize) * 100);
+                const progressBar = `<progress value="${progress}" max="100"></progress> ${progress}%`;
+                
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${project.name}</td>
+                    <td>${project.startDate}</td>
+                    <td>${project.endDate}</td>
+                    <td>${project.sampleSize}</td>
+                    <td>${project.sampleAchieved}</td>
+                    <td>${progressBar}</td>
+                `;
+                projectTableBody.appendChild(row);
+            });
+        }
+
+        // Calculate Salary Slab
+        function calculateSalarySlab(tasksCompleted) {
+            if (tasksCompleted >= 20) return "A";
+            if (tasksCompleted >= 15) return "B";
+            return "C";
+        }
+
+        // Show Status Message
+        function showStatusMessage(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = "block";
+            setTimeout(() => {
+                element.style.display = "none";
+            }, 5000);
+        }
+
+        // Show Error Message
+        function showErrorMessage(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = "block";
+            setTimeout(() => {
+                element.style.display = "none";
+            }, 5000);
+        }
+
+        // Mark Work Start
+        function markWorkStart() {
+            const selectedName = document.getElementById("employeeName").value;
+            const confirmName = document.getElementById("confirmName").value;
+
+            // Validate Name
+            if (selectedName !== confirmName) {
+                showErrorMessage("taskErrorMessage", "Employee name does not match. Please confirm your name.");
+                return;
+            }
+
+            // Save Work Start Time
+            const now = new Date();
+            const today = now.toISOString().split("T")[0];
+            const employeeIndex = employees.findIndex(emp => emp.name === selectedName && emp.date === today);
+
+            if (employeeIndex === -1) {
+                employees.push({
+                    name: selectedName,
+                    date: today,
+                    workStart: now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                    workEnd: null,
+                    tasksCompleted: 0,
+                    dailyEarnings: 0,
+                    incentives: 0,
+                    advances: 0
+                });
+                
+                // Save to Local Storage
+                saveData(DB_KEYS.EMPLOYEES, employees);
+                showStatusMessage("taskStatusMessage", "Work started successfully!");
+            } else {
+                if (employees[employeeIndex].workStart) {
+                    showErrorMessage("taskErrorMessage", "You have already marked work start today.");
+                } else {
+                    employees[employeeIndex].workStart = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    saveData(DB_KEYS.EMPLOYEES, employees);
+                    showStatusMessage("taskStatusMessage", "Work started successfully!");
+                }
+            }
+        }
+
+        // Mark Work End
+        function markWorkEnd() {
+            const selectedName = document.getElementById("employeeName").value;
+            const confirmName = document.getElementById("confirmName").value;
+
+            // Validate Name
+            if (selectedName !== confirmName) {
+                showErrorMessage("taskErrorMessage", "Employee name does not match. Please confirm your name.");
+                return;
+            }
+
+            // Save Work End Time and Enable Task Entry
+            const now = new Date();
+            const today = now.toISOString().split("T")[0];
+            const employeeIndex = employees.findIndex(emp => emp.name === selectedName && emp.date === today);
+
+            if (employeeIndex === -1) {
+                showErrorMessage("taskErrorMessage", "Please mark work start first.");
+                return;
+            }
+
+            if (employees[employeeIndex].workEnd) {
+                showErrorMessage("taskErrorMessage", "You have already marked work end today.");
+                return;
+            }
+
+            employees[employeeIndex].workEnd = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            document.getElementById("taskForm").classList.remove("disabled");
+
+            // Save to Local Storage
+            saveData(DB_KEYS.EMPLOYEES, employees);
+            showStatusMessage("taskStatusMessage", "Work ended successfully! You can now enter tasks.");
+        }
+
+        // Employee Task Updation Form
+        document.getElementById("taskForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const selectedName = document.getElementById("employeeName").value;
+            const tasksCompleted = parseInt(document.getElementById("tasksCompleted").value);
+
+            // Get Today's Date
+            const today = new Date().toISOString().split("T")[0];
+
+            // Update Employee Data
+            const employeeIndex = employees.findIndex(emp => emp.name === selectedName && emp.date === today);
+            if (employeeIndex !== -1) {
+                if (employees[employeeIndex].tasksCompleted > 0) {
+                    showErrorMessage("taskErrorMessage", "You have already updated tasks today.");
+                    return;
+                }
+
+                employees[employeeIndex].tasksCompleted = tasksCompleted;
+
+                // Calculate Daily Earnings based on slab
+                const slab = calculateSalarySlab(tasksCompleted);
+                employees[employeeIndex].dailyEarnings = tasksCompleted * slabRates[slab];
+                
+                // Save to Local Storage
+                saveData(DB_KEYS.EMPLOYEES, employees);
+
+                // Clear Form
+                document.getElementById("taskForm").reset();
+                document.getElementById("taskForm").classList.add("disabled");
+                
+                showStatusMessage("taskStatusMessage", "Tasks Updated Successfully!");
+                
+                // Refresh salary dashboard if visible
+                if (document.getElementById("salaryDashboard").classList.contains("active")) {
+                    loadSalaryDashboard();
+                }
+            } else {
+                showErrorMessage("taskErrorMessage", "No attendance record found for today. Please mark work start first.");
+            }
+        });
+
+        // Admin Login Function
+        function adminLogin() {
+            const password = document.getElementById("adminPassword").value;
+            if (password === adminPassword) {
+                loggedInUser = { type: "admin" };
+                document.getElementById("adminLoginSection").style.display = "none";
+                document.getElementById("adminControls").classList.add("active");
+                document.getElementById("adminPassword").value = "";
+                showStatusMessage("adminStatusMessage", "Admin login successful!");
+            } else {
+                showErrorMessage("adminErrorMessage", "Invalid admin password.");
+            }
+        }
+
+        // Admin Logout Function
+        function adminLogout() {
+            loggedInUser = null;
+            document.getElementById("adminControls").classList.remove("active");
+            document.getElementById("adminLoginSection").style.display = "block";
+            showPortal('adminLoginSection');
+        }
+
+        // Add Incentive and Advance (Admin Only)
+        function addIncentiveAndAdvance() {
+            if (loggedInUser && loggedInUser.type === "admin") {
+                const incentiveAmount = parseFloat(document.getElementById("incentiveAmount").value) || 0;
+                const advanceAmount = parseFloat(document.getElementById("advanceAmount").value) || 0;
+                const selectedName = document.getElementById("adminEmployeeName").value;
+
+                if (!selectedName) {
+                    showErrorMessage("adminStatusMessage", "Please select an employee.");
+                    return;
+                }
+
+                const today = new Date().toISOString().split("T")[0];
+                let employeeIndex = employees.findIndex(emp => emp.name === selectedName && emp.date === today);
+
+                if (employeeIndex === -1) {
+                    // Create a new entry if none exists for today
+                    employees.push({
+                        name: selectedName,
+                        date: today,
+                        workStart: null,
+                        workEnd: null,
+                        tasksCompleted: 0,
+                        dailyEarnings: 0,
+                        incentives: incentiveAmount,
+                        advances: advanceAmount
+                    });
+                    employeeIndex = employees.length - 1;
+                } else {
+                    // Update existing entry
+                    employees[employeeIndex].incentives = (employees[employeeIndex].incentives || 0) + incentiveAmount;
+                    employees[employeeIndex].advances = (employees[employeeIndex].advances || 0) + advanceAmount;
+                }
+
+                // Save to Local Storage
+                saveData(DB_KEYS.EMPLOYEES, employees);
+
+                // Clear form
+                document.getElementById("incentiveAmount").value = "";
+                document.getElementById("advanceAmount").value = "";
+
+                showStatusMessage("adminStatusMessage", "Incentive and Advance added successfully!");
+                
+                // Refresh salary dashboard if visible
+                if (document.getElementById("salaryDashboard").classList.contains("active")) {
+                    loadSalaryDashboard();
+                }
+            } else {
+                showErrorMessage("adminStatusMessage", "Only admin can add incentives and advances.");
+            }
+        }
+
+        // Add Project (Admin Only)
+        function addProject() {
+            if (loggedInUser && loggedInUser.type === "admin") {
+                const projectName = document.getElementById("projectName").value;
+                const startDate = document.getElementById("startDate").value;
+                const endDate = document.getElementById("endDate").value;
+                const sampleSize = parseInt(document.getElementById("sampleSize").value);
+                const sampleAchieved = parseInt(document.getElementById("sampleAchieved").value);
+
+                if (!projectName || !startDate || !endDate || isNaN(sampleSize) || isNaN(sampleAchieved)) {
+                    showErrorMessage("adminStatusMessage", "Please fill all project details with valid values.");
+                    return;
+                }
+
+                if (sampleAchieved > sampleSize) {
+                    showErrorMessage("adminStatusMessage", "Sample achieved cannot be greater than sample size.");
+                    return;
+                }
+
+                projects.push({
+                    name: projectName,
+                    startDate: startDate,
+                    endDate: endDate,
+                    sampleSize: sampleSize,
+                    sampleAchieved: sampleAchieved
+                });
+
+                // Save to Local Storage
+                saveData(DB_KEYS.PROJECTS, projects);
+
+                // Refresh Project List
+                loadProjectList();
+
+                // Clear Form
+                document.getElementById("projectName").value = "";
+                document.getElementById("startDate").value = "";
+                document.getElementById("endDate").value = "";
+                document.getElementById("sampleSize").value = "";
+                document.getElementById("sampleAchieved").value = "";
+
+                showStatusMessage("adminStatusMessage", "Project added successfully!");
+            } else {
+                showErrorMessage("adminStatusMessage", "Only admin can add projects.");
+            }
+        }
+
+        // Export Data
+        function exportData() {
+            if (!loggedInUser || loggedInUser.type !== "admin") {
+                showErrorMessage("adminStatusMessage", "Only admin can export data.");
+                return;
+            }
+
+            const data = {
+                employees: employees,
+                projects: projects,
+                adminPassword: adminPassword
+            };
+
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `aru-research-data-${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showStatusMessage("adminStatusMessage", "Data exported successfully!");
+        }
+
+        // Import Data
+        function importData() {
+            if (!loggedInUser || loggedInUser.type !== "admin") {
+                showErrorMessage("adminStatusMessage", "Only admin can import data.");
+                return;
+            }
+
+            const fileInput = document.getElementById("importFile");
+            fileInput.click();
+            
+            fileInput.onchange = e => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = event => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        
+                        if (data.employees && data.projects) {
+                            if (confirm("This will overwrite all current data. Are you sure?")) {
+                                employees = data.employees;
+                                projects = data.projects;
+                                adminPassword = data.adminPassword || "Admin1234";
+                                
+                                saveData(DB_KEYS.EMPLOYEES, employees);
+                                saveData(DB_KEYS.PROJECTS, projects);
+                                saveData(DB_KEYS.ADMIN_PASSWORD, adminPassword);
+                                
+                                showStatusMessage("adminStatusMessage", "Data imported successfully!");
+                                
+                                // Refresh views
+                                loadSalaryDashboard();
+                                loadProjectList();
+                            }
+                        } else {
+                            showErrorMessage("adminStatusMessage", "Invalid data format.");
+                        }
+                    } catch (error) {
+                        showErrorMessage("adminStatusMessage", "Error reading file: " + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            };
+        }
+
+        // Clear All Data
+        function clearAllData() {
+            if (!loggedInUser || loggedInUser.type !== "admin") {
+                showErrorMessage("adminStatusMessage", "Only admin can clear data.");
+                return;
+            }
+
+            if (confirm("This will permanently delete ALL data. Are you sure?")) {
+                localStorage.removeItem(DB_KEYS.EMPLOYEES);
+                localStorage.removeItem(DB_KEYS.PROJECTS);
+                
+                // Reinitialize data
+                employees = [];
+                projects = [];
+                
+                showStatusMessage("adminStatusMessage", "All data has been cleared.");
+                
+                // Refresh views
+                loadSalaryDashboard();
+                loadProjectList();
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener("DOMContentLoaded", function() {
+            // Load initial data
+            loadProjectList();
+            loadSalaryDashboard();
+            
+            // Show main screen by default
+            showPortal('taskUpdate');
+        });
+    </script>
+</body>
+</html>
